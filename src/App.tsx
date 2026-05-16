@@ -6,13 +6,18 @@ import { Register } from "./pages/Register";
 import { Profile } from "./pages/Profile";
 import { PrivateRoute } from "./components/PrivateRoute";
 import { PublicOnlyRoute } from "./components/PublicOnlyRoute";
+import { useAuth } from "./contexts/AuthContext";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  useEffect(() => {
-    const token = localStorage.getItem("@Marcut:token");
-    setIsLoggedIn(!!token); // vira true se tiver token, e false se for null
-  }, []);
+  const { user, loading } = useAuth();
+  const isLoggedIn = !!user;
+  if (loading) {
+    return (
+      <div style={{ fontFamily: "sans-serif", padding: "20px" }}>
+        Carregando...
+      </div>
+    );
+  }
   return (
     <BrowserRouter>
       <nav

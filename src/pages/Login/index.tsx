@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { api } from "../../services/api";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -17,9 +21,9 @@ export function Login() {
         email,
         password,
       });
-      const { token } = response.data;
-      localStorage.setItem("@Marcut:token", token);
-      window.location.href = "/profile";
+      const { token, user } = response.data;
+      login(token, user);
+      navigate("/profile");
     } catch (err: any) {
       const apiError =
         err.response?.data?.error || "Erro ao conectar com o servidor.";
