@@ -1,8 +1,50 @@
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Home } from "./pages/Home";
+import { Login } from "./pages/Login";
+import { Register } from "./pages/Register";
+import { Profile } from "./pages/Profile";
+import { PrivateRoute } from "./components/PrivateRoute";
+import { PublicOnlyRoute } from "./components/PublicOnlyRoute";
+
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    const token = localStorage.getItem("@Marcut:token");
+    setIsLoggedIn(!!token); // vira true se tiver token, e false se for null
+  }, []);
   return (
-    <div>
-      <h1>Hellow lindo mundo</h1>
-    </div>
+    <BrowserRouter>
+      <nav
+        style={{
+          padding: "20px",
+          background: "#f0f0f0",
+          display: "flex",
+          gap: "20px",
+          fontFamily: "sans-serif",
+        }}
+      >
+        <Link to="/">Página Inicial</Link>
+        {!isLoggedIn && (
+          <>
+            <Link to="/login">Ir para Login</Link>
+            <Link to="/register">Ir para Cadastro</Link>
+          </>
+        )}
+        {isLoggedIn && <Link to="/profile">Meu Perfil (🔒)</Link>}
+      </nav>
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route element={<PublicOnlyRoute />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
+        <Route element={<PrivateRoute />}>
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
